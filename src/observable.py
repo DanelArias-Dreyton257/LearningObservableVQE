@@ -75,16 +75,21 @@ def hermitian_to_sparsepauliop(B, n_qubits):
     return SparsePauliOp(basis, coefficients)
 
 
-def random_complex_vector(n, seed=None):
+def random_complex_vector(n, seed=None, range_real=[0, 1], range_imag=[0, 1]):
     """
     Create a random complex vector of size n.
 
     Args:
         n (int): The size of the vector.
+        seed (int): Optional. The seed for the random number generator.
+        range_real (list): Optional. The range for the real part of the vector elements.
+        range_imag (list): Optional. The range for the imaginary part of the vector elements
 
     Returns:
         vector (np.ndarray): A random complex vector.
     """
     if seed is not None:
         np.random.seed(seed)
-    return np.random.rand(n) + 1j * np.random.rand(n)
+    real = np.random.uniform(range_real[0], range_real[1], n)
+    imag = np.random.uniform(range_imag[0], range_imag[1], n)
+    return real + 1j * imag
