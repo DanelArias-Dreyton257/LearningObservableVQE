@@ -50,19 +50,14 @@ def assign_parameters_to_matrix(matrix, parameters):
     Returns:
         matrix (np.ndarray): The matrix with the parameters assigned.
     """
-    # Ensure parameters are in the correct order
-    symbols = sorted(matrix.free_symbols, key=lambda x: str(x)
-                     )  # Sort symbols to ensure order
-    param_dict = {symbols[i]: parameters.flatten()[i]
-                  for i in range(len(symbols))}
+    # Extract symbols in a sorted order (only needed once)
+    symbols = sorted(matrix.free_symbols, key=lambda x: str(x))
 
-    # Substitute the symbols with the corresponding parameter values
-    B_val = matrix.subs(param_dict)
+    # Create a fast numerical function for evaluation
+    f_matrix = sp.lambdify(symbols, matrix, 'numpy')
 
-    # Convert the result to a numpy array and cast to complex type
-    B_val = np.array(B_val).astype(complex)
-
-    return B_val
+    # Convert to numpy array and cast to complex type
+    return np.array(f_matrix(*parameters.ravel()), dtype=complex)
 
 
 def hermitian_to_sparsepauliop(B, n_qubits):
